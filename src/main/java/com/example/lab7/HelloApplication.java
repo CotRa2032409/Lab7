@@ -2,13 +2,11 @@ package com.example.lab7;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -44,10 +42,11 @@ public class HelloApplication extends Application {
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Veuillez sélectionner un fichier");
-        //fileChooser.setInitialDirectory(new File("file:Lab7"));
+
 
 
         lignes.setOnAction((ae) -> {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers data", "*.dat"));
             File fichier = fileChooser.showOpenDialog(stage);
             List<String> data = null;
             try {
@@ -55,27 +54,85 @@ public class HelloApplication extends Application {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            final LineChart<String, Number> root = new LineChart<>(axeX,axeY);
+            final LineChart<String, Number> root = new LineChart<>(axeX, axeY);
             root.setTitle("Température pour chaque mois");
 
             XYChart.Series series = new XYChart.Series();
             series.setName("Température");
-            String[] list;
-            String[] list2;
-            for (int i = 0; i < data.size(); i++) {
-                list = data.get(0).split(",");
-                list2 = data.get(1).split(",");
-                series.getData().add(new XYChart.Data(list[i], list2[i]));
+            String[] list = data.get(0).split(",");
+            String[] list2 = data.get(1).split(",");
+
+            for (int i = 0; i < list.length; i++) {
+
+                series.getData().add(new XYChart.Data(list[i], Double.parseDouble(list2[i])));
             }
             root.getData().addAll(series);
             borderPane.setCenter(root);
         });
 
-        test.setOnAction((ae) -> {
+        zones.setOnAction((ae) -> {
             fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers data", "*.dat"));
-            File file = fileChooser.showSaveDialog(stage);
+            File fichier = fileChooser.showOpenDialog(stage);
+            List<String> data = null;
+            try {
+                data = Files.readAllLines(fichier.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            final AreaChart<String, Number> root = new AreaChart<>(axeX, axeY);
+            root.setTitle("Température pour chaque mois");
+
+            XYChart.Series series = new XYChart.Series();
+            series.setName("Température");
+            String[] list = data.get(0).split(",");
+            String[] list2 = data.get(1).split(",");
+
+            for (int i = 0; i < list.length; i++) {
+
+                series.getData().add(new XYChart.Data(list[i], Double.parseDouble(list2[i])));
+            }
+            root.getData().addAll(series);
+            borderPane.setCenter(root);
+        });
+
+        barres.setOnAction((ae) -> {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers data", "*.dat"));
+            File fichier = fileChooser.showOpenDialog(stage);
+            List<String> data = null;
+            try {
+                data = Files.readAllLines(fichier.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            final BarChart<String, Number> root = new BarChart<>(axeX, axeY);
+            root.setTitle("Température pour chaque mois");
+
+            XYChart.Series series = new XYChart.Series();
+            series.setName("Température");
+            String[] list = data.get(0).split(",");
+            String[] list2 = data.get(1).split(",");
+
+            for (int i = 0; i < list.length; i++) {
+
+                series.getData().add(new XYChart.Data(list[i], Double.parseDouble(list2[i])));
+            }
+            root.getData().addAll(series);
+            borderPane.setCenter(root);
         });
         Scene scene = new Scene(borderPane);
+
+        test.setOnAction((ae) -> {
+            fileChooser.getExtensionFilters().removeAll();
+
+            WritableImage image = scene.snapshot(null);
+            File file = fileChooser.showSaveDialog(stage);
+            /*try {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+        });
+
         stage.setScene(scene);
         stage.show();
     }
