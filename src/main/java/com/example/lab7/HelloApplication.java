@@ -1,8 +1,10 @@
 package com.example.lab7;
 
 import javafx.application.Application;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -10,6 +12,8 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +28,7 @@ public class HelloApplication extends Application {
         CategoryAxis axeX = new CategoryAxis();
         NumberAxis axeY = new NumberAxis();
         axeX.setLabel("Mois");
-        axeY.setLabel("Température (°C");
+        axeY.setLabel("Température (°C)");
 
 
         Menu importer = new Menu("Importer");
@@ -42,11 +46,12 @@ public class HelloApplication extends Application {
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Veuillez sélectionner un fichier");
-
-
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers data", "*.dat"),
+                new FileChooser.ExtensionFilter(".png", "*.png"),
+                new FileChooser.ExtensionFilter(".jpg", "*.jpg"),
+                new FileChooser.ExtensionFilter(".gif", "*.gif"));
 
         lignes.setOnAction((ae) -> {
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers data", "*.dat"));
             File fichier = fileChooser.showOpenDialog(stage);
             List<String> data = null;
             try {
@@ -71,7 +76,6 @@ public class HelloApplication extends Application {
         });
 
         zones.setOnAction((ae) -> {
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers data", "*.dat"));
             File fichier = fileChooser.showOpenDialog(stage);
             List<String> data = null;
             try {
@@ -96,7 +100,6 @@ public class HelloApplication extends Application {
         });
 
         barres.setOnAction((ae) -> {
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichiers data", "*.dat"));
             File fichier = fileChooser.showOpenDialog(stage);
             List<String> data = null;
             try {
@@ -122,15 +125,13 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(borderPane);
 
         test.setOnAction((ae) -> {
-            fileChooser.getExtensionFilters().removeAll();
-
-            WritableImage image = scene.snapshot(null);
+            WritableImage image = borderPane.getCenter().snapshot(null, null);
             File file = fileChooser.showSaveDialog(stage);
-            /*try {
+            try {
                 ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
             } catch (IOException e) {
                 e.printStackTrace();
-            }*/
+            }
         });
 
         stage.setScene(scene);
